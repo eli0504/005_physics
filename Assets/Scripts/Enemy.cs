@@ -18,5 +18,9 @@ public class Enemy : MonoBehaviour
     {
         Vector3 direction = (player.transform.position - transform.position).normalized; //enemigo sigue a player 
         _rigidbody.AddForce(direction * speed); //se aplica una fuerza sobre el rigidbody del enemigo hacia el player
+        if (transform.position.y < -4)
+        {
+            Destroy(gameObject);
+        }
     }
 }

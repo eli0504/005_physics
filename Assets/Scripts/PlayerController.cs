@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
     public bool hasPowerup;
     private float powerupForce = 15f;
 
+    public GameObject[] powerupIndicators;
+
     private void Start()
     {
         //funciones de tipo:
@@ -30,6 +32,7 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Powerup"))
         {
+            StartCoroutine(PowerupCountDown());
             hasPowerup = true;
             Destroy(other.gameObject);
         }
@@ -43,5 +46,16 @@ public class PlayerController : MonoBehaviour
             Vector3 awayFromPlayer = (other.gameObject.transform.position - transform.position).normalized;
             enemyRigidbody.AddForce(awayFromPlayer * powerupForce, ForceMode.Impulse);
         }
+    }
+
+    private IEnumerator PowerupCountDown()
+    {
+        for (int i = 0; i < powerupIndicators.Length; i++)
+        {
+            powerupIndicators[i].SetActive(true);
+            yield return new WaitForSeconds(2);
+            powerupIndicators[i].SetActive(false); //setactive = se ve o no en pantalla
+        }
+        hasPowerup = false;
     }
 }
