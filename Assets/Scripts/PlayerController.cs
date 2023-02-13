@@ -4,21 +4,25 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 30f;
+    private float speed = 3f;
     private float forwardInput;
-
     private Rigidbody _rigidbody;
     private GameObject focalPoint;
-
-    public bool hasPowerup;
+    private bool hasPowerup, hasPowerup2;
     private float powerupForce = 15f;
+    private float originalScale = 1.5f;
+    private float powerupScale = 2f; // escala aumentada por el powerup
 
     public GameObject[] powerupIndicators;
 
+
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+    }
     private void Start()
     {
-        //funciones de tipo:
-        _rigidbody = GetComponent<Rigidbody>(); 
+        //función de tipo:
         focalPoint = GameObject.Find("Focal Point"); 
     }
 
@@ -32,13 +36,20 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Powerup"))
         {
-            StartCoroutine(PowerupCountDown());
             hasPowerup = true;
             Destroy(other.gameObject);
+            StartCoroutine(PowerupCountDown());
+        }
+
+        if(other.gameObject.CompareTag("Powerup Scale"))
+        {
+            hasPowerup2 = true;
+            Destroy(other.gameObject);
+            StartCoroutine(PowerupCountDown());
         }
     }
 
-    private void OnCollisionEnter(Collision other)
+    private void OnCollisionEnter(Collision other) //no hay ningún trigger
     {
         if (other.gameObject.CompareTag("Enemy") && hasPowerup)
         {
@@ -50,12 +61,23 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator PowerupCountDown()
     {
+        if (hasPowerup2)
+        {
+            transform.localScale = powerupScale * Vector3.one;
+        }
         for (int i = 0; i < powerupIndicators.Length; i++)
         {
             powerupIndicators[i].SetActive(true);
             yield return new WaitForSeconds(2);
-            powerupIndicators[i].SetActive(false); //setactive = se ve o no en pantalla
+            powerupIndicators[i].SetActive(false); //SetActive = se ve o no en pantalla
         }
+
+        if (hasPowerup2)
+        {
+            transform.localScale = originalScale * Vector3.one;
+        }
+
         hasPowerup = false;
+        hasPowerup2 = false;
     }
 }

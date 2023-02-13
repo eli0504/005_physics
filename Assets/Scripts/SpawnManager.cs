@@ -5,26 +5,29 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     public GameObject enemyPrefab;
-    private float spawnRange = 9f;
+    public GameObject[] powerupPrefabs;
 
-    public int enemiesInScene;
-    public int enemiesPerWave = 1;
-    public GameObject powerupPrefab;
+    private int enemiesInScene;
+    private int enemiesPerWave = 1;
+    private float spawnRange = 9f; //límite de la plataforma
+    
 
     private void Start()
     {
-        SpawnEnemyWave(enemiesPerWave);
-        Instantiate(powerupPrefab, RandomSpawnPosition(), Quaternion.identity);
+        SpawnEnemyWave(enemiesPerWave); //instanciar un enemigo
     }
 
     private void Update()
     {
+        //buscamos la cantidad de enemigos que hay en escena
         enemiesInScene = FindObjectsOfType<Enemy>().Length;
-        if (enemiesInScene <= 0)
+        if(enemiesInScene <= 0)
         {
+            //si me quedo sin enemigos en escena
+            //aumento en uno los enemigos por oleada
             enemiesPerWave++;
+            //llamo a una nueva oleada
             SpawnEnemyWave(enemiesPerWave);
-            Instantiate(powerupPrefab, RandomSpawnPosition(), Quaternion.identity);
         }
     }
     private Vector3 RandomSpawnPosition()
@@ -36,6 +39,8 @@ public class SpawnManager : MonoBehaviour
 
     private void SpawnEnemyWave (int enemiesToSpawn)
     {
+        int randomIndex = Random.Range(0, powerupPrefabs.Length);
+        Instantiate(powerupPrefabs[randomIndex], RandomSpawnPosition(), Quaternion.identity);
         for (int i = 0; i < enemiesToSpawn; i++)
         {
             Instantiate(enemyPrefab, RandomSpawnPosition(), Quaternion.identity);
